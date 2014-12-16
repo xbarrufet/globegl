@@ -1,0 +1,44 @@
+body
+        {
+            background-color: #000;
+            padding: 1%;
+            color: #ccc;
+            font-size: 1em;
+            margin: 0; overflow: hidden; 
+            background-color: #000;
+        }
+
+        a
+        {
+            color: #0CC5DA;
+            text-decoration: none;
+        }
+
+        a:hover
+        {
+            color: #DCE808;
+            text-decoration: underline;
+        }
+
+        .console
+        {
+            font-family:'Lekton', sans-serif;
+            font-size: 0.7em;
+        }
+
+        input[type="button"]
+        {
+            cursor: pointer;
+        }
+		.tm  { 
+            position: absolute; 
+            top: 10px; 
+            left: 10px; 
+            background-color: rgba(100, 100, 100, 0.3);
+            height:500px;
+            width:350px;
+        }
+        .tm p {color:rgb(120, 120, 120);
+        }
+		.webgl-error { font: 15px/30px monospace; text-align: center; color: #fff; margin: 50px; }
+		.webgl-error a { color: #fff; }
