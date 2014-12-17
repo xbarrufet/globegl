@@ -87,6 +87,8 @@ $(document).ready(function() {
     function processNewFiles() {
         while(!cuaFiles.isEmpty()) {
             var rFile = cuaFiles.dequeue();
+            // add file to charting
+            processChartFile(rFile);
             if(!cuaLightsOFF.isEmpty()) {
                 var lf = cuaLightsOFF.dequeue();
                 cuaLightsUP.enqueue(startLightEffect(lf,rFile));

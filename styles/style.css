@@ -5,6 +5,7 @@ body
             color: #ccc;
             font-size: 1em;
             margin: 0; overflow: hidden; 
+            font-family: Helvetica, sans-serif;
             background-color: #000;
         }
 
@@ -42,3 +43,196 @@ body
         }
 		.webgl-error { font: 15px/30px monospace; text-align: center; color: #fff; margin: 50px; }
 		.webgl-error a { color: #fff; }
+
+
+a, p, h3, h6 {
+  color: #fff;
+  background: transparent;
+}
+
+h5 {
+  color: #fff;
+  padding-top: 35px;
+}
+
+.axis path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1px;
+  shape-rendering: crispEdges;
+}
+
+.axis line {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1px;
+  shape-rendering: crispEdges;
+}
+
+.legendText, .axis text {
+  font-size: 8px;
+  fill: #fff;
+}
+
+#loading {
+  width: 100px;
+  height: 100px;
+  background: url(img/loading.gif) no-repeat 5px 3px;
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+#intro {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+#menu {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  #icons {
+    position:absolute;
+    width:200px;
+    height:50px;
+    bottom:50px;
+    right:25%;
+    left:50%;
+    margin-left:-80px;
+  }
+}
+
+@media (min-width: 768px) {
+  #icons {
+    position: absolute;
+    bottom: 20px;
+    left: 0px;
+  }
+}
+
+.dataPoint {
+  fill: orange;
+  stroke: none;
+}
+
+.dataPoint:hover{
+  stroke: white;
+  stroke-width: 2px;
+}
+
+
+.element {
+  width: 370px;
+  height: 160px;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: rgba(48,103,145,.35);
+  border: 2px solid rgba(127,255,255,0.25);
+  border-radius: 8px;
+  text-align: center;
+  cursor: default;
+  -webkit-transform: scale(0.6,0.6);
+  
+      
+   
+}
+
+.dataElement {
+position: absolute;
+  top: 0px;
+  left: 160px;
+     width: 230px;
+  height: 160px;
+      
+  
+   
+}
+
+.element:hover {
+  box-shadow: 0px 0px 12px rgba(0,255,255,0.75);
+  border: 1px solid rgba(127,255,255,0.75);
+}
+
+.mapElement {
+ 
+    position:absolute;
+    left:10px;
+    
+}
+
+.mapElement img {
+ height: 150px;
+ width: 150px;
+ -webkit-filter: grayscale(100%) brightness(10);
+   
+}
+
+.dataElement svg {
+  position: absolute;
+  top: 20px;
+  left: 2px;
+  right: 0px;
+}
+
+
+
+
+
+.dataElement .fileData {
+  position: absolute;
+  top: 15px;
+  left: 0px;
+  right: 0px;
+  font-size: 40px;
+  color: rgba(255,255,255,0.75);
+}
+
+.dataElement .fileLabel {
+  position: absolute;
+  top: 56px;
+  left: 12px;
+  right: 0px;
+  font-size: 8px;
+  color: rgba(255,255,255,0.75);
+}
+
+.dataElement .chartTitle {
+  position: absolute;
+  top: 5px;
+  left: 0px;
+  right: 0px;
+  font-size: 12px;
+  color: rgba(127,255,255,0.75);
+}
+
+
+.barChart rect {
+  fill: steelblue;
+}
+
+button {
+  color: #fff;
+  background: transparent;
+  outline: 1px solid rgba(48,103,145,.75);
+  border: 0px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: rgba(48,103,145,.5);
+}
+button:active {
+  color: #000000;
+  background-color: rgba(48,103,145,.75);
+}
