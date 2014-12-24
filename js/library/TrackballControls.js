@@ -28,9 +28,13 @@ THREE.TrackballControls = function ( object, domElement ) {
 	this.staticMoving = false;
 	this.dynamicDampingFactor = 0.2;
 
-	this.minDistance = 0;
-	this.maxDistance = Infinity;
+	//this.minDistance = 0;
+	//this.maxDistance = Infinity;
+    this.minDistance = 6;
+	this.maxDistance = 15;
 
+    
+    
 	this.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
 
 	// internals
@@ -166,7 +170,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 	this.zoomCamera = function () {
 
 		if ( _state === STATE.TOUCH_ZOOM ) {
-
+             
 			var factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
 			_touchZoomDistanceStart = _touchZoomDistanceEnd;
 			_eye.multiplyScalar( factor );
@@ -188,8 +192,9 @@ THREE.TrackballControls = function ( object, domElement ) {
 					_zoomStart.y += ( _zoomEnd.y - _zoomStart.y ) * this.dynamicDampingFactor;
 
 				}
-
+                
 			}
+              
 
 		}
 
@@ -276,7 +281,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 			_this.dispatchEvent( changeEvent );
 
 			lastPosition.copy( _this.object.position );
-
+                 
 		}
 
 	};

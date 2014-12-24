@@ -3,14 +3,23 @@
 var cuaFiles,cuaLightsON,cuaLightsUP,cuaLightsDOWN;
 var webglEl,scene,camara,renderer;
 var sphere,clouds,sun;
-
-
+var mobileDevice=0;
+var entities;
+var distanceInitial=15, radiusEntity=0.1,radius
+var domEvents;
+var flightRoute;
 
 $(document).ready(function() {
          cuaFiles = new Queue();
          cuaLightsOFF = new Queue();
          cuaLightsUP = new Queue();
          cuaLightsDOWN = new Queue();
+        flightRoute=new Queue();
+    
+    
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+           mobileDevice=1;
+        }
 
          webglEl = document.getElementById('webgl');
     
@@ -23,20 +32,20 @@ $(document).ready(function() {
             height = window.innerHeight;
 
         // Earth params
-        var radius   = 5,
-            segments = 32,
+        radius=5;
+        var segments = 32,
             rotation = 6;  
 
          scene = new THREE.Scene();
 
         camera = new THREE.PerspectiveCamera(45, width / height, 0.01, 1000);
-        camera.position.z = 15
+        camera.position.z = distanceInitial;
 
         renderer = new THREE.WebGLRenderer();
         renderer.setSize(width, height);
 
         sphere = createSphere(radius, segments);
-        sphere.rotation.y = rotation; 
+        //sphere.rotation.y = rotation; 
         scene.add(sphere)
         sphere.position= new THREE.Vector3( 0, 0, 0 );
         scene.add(new THREE.AmbientLight(0x222222));
@@ -52,15 +61,23 @@ $(document).ready(function() {
             cuaLightsOFF.enqueue(lf);
         }
       
-        clouds = createClouds(radius, segments);
-        clouds.rotation.y = rotation;
-        scene.add(clouds)
+        if(!mobileDevice) {
+            clouds = createClouds(radius, segments);
+            clouds.rotation.y = rotation;
+            scene.add(clouds)
+        }
 
         var stars = createStars(90, 64);
         scene.add(stars);
+    
+
+        domEvents   = new THREEx.DomEvents(camera, renderer.domElement)
+        entities=generateEntityDots(sphere);
+    
 
         controls = new THREE.TrackballControls(camera);
-
+    
+    
         webglEl.appendChild(renderer.domElement);
 
         render();
@@ -74,15 +91,33 @@ $(document).ready(function() {
 	function render() {
 		controls.update();
         sunLightPosition();
-		sphere.rotation.y += 0.0005;
-		clouds.rotation.y += 0.0005;		
+		//sphere.rotation.y += 0.0005;
+       // console.log("camera pos:" + camera.position.x +" " + camera.position.y + " " + camera.position.z); 
+        
+        if(!mobileDevice)
+		 // clouds.rotation.y += 0.0005;		
 		requestAnimationFrame(render);
 		renderer.render(scene, camera);
         processNewFiles();
         processDOWNLights();
-        processUPLights();    
+        processUPLights();   
+        processFlightRoute();
+        
+        processRadiusEntities();
+        
 	}
 
+
+    function processFlightRoute() 
+    {
+       
+        if(!flightRoute.isEmpty()) {
+            var pos = flightRoute.dequeue();
+            camera.position.x=pos.x;
+            camera.position.y=pos.y;
+            camera.position.z=pos.z;
+        }
+    }
 
     function processNewFiles() {
         while(!cuaFiles.isEmpty()) {
@@ -138,17 +173,32 @@ $(document).ready(function() {
    
 
 	function createSphere(radius, segments) {
-		return new THREE.Mesh(
+        if(mobileDevice) {
+            return new THREE.Mesh(
+                new THREE.SphereGeometry(radius, segments, segments),
+                new THREE.MeshPhongMaterial({
+                    map:THREE.ImageUtils.loadTexture('earth.jpg'),
+                    bumpMap:     THREE.ImageUtils.loadTexture('images/elev_bump_4k.jpg'),
+                    bumpScale:   0.005,
+                    specularMap: THREE.ImageUtils.loadTexture('images/water_4k.png'),
+                    specular:    new THREE.Color('grey')								
+                })
+            );
+        } else {
+            return new THREE.Mesh(
 			new THREE.SphereGeometry(radius, segments, segments),
-			new THREE.MeshPhongMaterial({
-				map:         THREE.ImageUtils.loadTexture('images/2_no_clouds_4k.jpg'),
-				bumpMap:     THREE.ImageUtils.loadTexture('images/elev_bump_4k.jpg'),
+			new THREE.MeshLambertMaterial({
+                //map:         THREE.ImageUtils.loadTexture('images/2_no_clouds_4k.jpg'),
+				map:         THREE.ImageUtils.loadTexture('images/1_earth_8k.jpg'),
+                bumpMap:     THREE.ImageUtils.loadTexture('images/elev_bump_4k.jpg'),
 				bumpScale:   0.005,
 				specularMap: THREE.ImageUtils.loadTexture('images/water_4k.png'),
 				specular:    new THREE.Color('grey')								
 			})
 		);
+        }
 	}
+
 
 	function createClouds(radius, segments) {
 		return new THREE.Mesh(
@@ -181,6 +231,9 @@ $(document).ready(function() {
         }
     }
 
+
+   
+
 /*var pox = 0;
 var poy = 0;
 var poz = 105;
@@ -207,15 +260,53 @@ function sunLightPosition() {
 }
 
 
-function latLongToVector3(lat, lon, radius, heigth) {
-        var phi = (lat)*Math.PI/180;
-        var theta = (lon-180)*Math.PI/180;
- 
-        var x = -(radius+heigth) * Math.cos(phi) * Math.cos(theta);
-        var y = (radius+heigth) * Math.sin(phi);
-        var z = (radius+heigth) * Math.cos(phi) * Math.sin(theta);
-        return new THREE.Vector3(x,y,z);
+
+
+function generateEntityDots(scene) {
+ var entitiesAux=new Array( country_entities.length);   
+ for(t=0;t<country_entities.length;t++) {
+     entitiesAux[t] = generateSingleEntity(scene,country_entities[t]);
+ }
+  return entitiesAux;  
 }
+
+function generateSingleEntity(scene,entity) {
+    var vecEntity = latLongToVector3(entity.Latitude,entity.Longitude,5,0);
+    var geometry = new THREE.SphereGeometry( radiusEntity, 32, 32 );
+    var material = new THREE.MeshPhongMaterial ( {specular:0x0000FF,shininess:100,color:0x0000FF} );
+    var entitySphere = new THREE.Mesh( geometry, material );
+    entitySphere.position=vecEntity;
+    scene.add( entitySphere );
+    //event listener
+    domEvents.addEventListener(entitySphere, 'click', function(event){
+        var clicked = getEntityByMeshId(entitySphere.id);
+        if(clicked!=null)
+            flightRoute = generateFlighCoordinates(camera.position,latLongToVector3(clicked.entity.Latitude,clicked.entity.Longitude,radius,1),100)});
+    
+    return {entitySphere:entitySphere,entity:entity};
+    
+}
+                               
+
+function processRadiusEntities() {
+    var scaleFactor = camera.position.distanceTo (sphere.position)/(distanceInitial); 
+    //need to resize exponentially
+    scaleFactor=scaleFactor*scaleFactor;
+    for(t=0;t<entities.length;t++) {
+        entities[t].entitySphere.scale.set(scaleFactor,scaleFactor,scaleFactor);
+        //sphere.scale.set(scaleFactor,scaleFactor,scaleFactor);
+    }  
+}
+
+
+function getEntityByMeshId(id) {
+    for(t=0;t<entities.length;t++) {
+        if(entities[t].entitySphere.id==id)
+            return entities[t];
+    }
+    return null;
+}
+
 
 
 
